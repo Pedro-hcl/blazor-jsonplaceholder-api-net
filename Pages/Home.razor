@@ -1,0 +1,57 @@
+﻿@page "/"
+@inject HttpClient Http
+@using BlazorUsersJsonPlaceHolderApi.Models
+
+<PageTitle>Home</PageTitle>
+
+
+
+
+<h3>Consulta de Utilizadores - JSONPlaceholder</h3>
+
+@if (primeiroUsuario == null)
+{
+    <p>A carregar dados...</p>
+}
+else
+{
+    <div>
+        <p><strong>Nome:</strong> @primeiroUsuario.name</p>
+        <p><strong>Cidade:</strong> @primeiroUsuario.address?.city</p>
+        <p><strong>Empresa:</strong> @primeiroUsuario.company?.name</p>
+    </div>
+}
+
+
+
+@code {
+
+
+    private Usuario primeiroUsuario;
+
+    protected override async Task OnInitializedAsync()
+    {
+    
+       
+        try
+        {
+            var usuarios = await Http.GetFromJsonAsync<List<Usuario>>("https://jsonplaceholder.typicode.com/users");
+
+            if (usuarios != null && usuarios.Count > 0)
+            {
+                primeiroUsuario = usuarios[0];
+        
+
+                Console.WriteLine($"Nome: {primeiroUsuario.name}");
+                Console.WriteLine($"Cidade: {primeiroUsuario.address?.city}");
+                Console.WriteLine($"Empresa: {primeiroUsuario.company?.name}");
+
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Erro ao consumir a API: {ex.Message}");
+        }
+    }
+
+}
